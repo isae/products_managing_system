@@ -20,8 +20,7 @@ mysqli_real_query($db, "SELECT * FROM products WHERE 1");
     <div id="globalAlert">
 
     </div>
-    <h1>Hello, world!</h1>
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addProductModal">
+    <button type="button" id="openModalButton" class="btn btn-primary btn-lg" style="margin: 10px 0 10px 0;">
         Добавить товар
     </button>
 
@@ -65,7 +64,25 @@ mysqli_real_query($db, "SELECT * FROM products WHERE 1");
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button id="productAddButton" type="button" type="submit" class="btn btn-primary">Добавить</button>
+                        <button id="productAddButton" type="button" type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="maybeDeleteModal" tabindex="-1" role="dialog" aria-labelledby="maybeDeleteModalLabel">
+
+        <form>
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="maybeDeleteModalLabel"></h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                        <button id="productDeleteButton" type="button" type="submit" class="btn btn-danger">Удалить</button>
                     </div>
                 </div>
             </div>
@@ -83,13 +100,13 @@ mysqli_real_query($db, "SELECT * FROM products WHERE 1");
         <tbody>
         <?php if ($result = $db->use_result()): ?>
             <?php while ($row = $result->fetch_row()): ?>
-                <tr>
-                    <td><?= $row[0] ?></td>
-                    <td><?= $row[1] ?></td>
-                    <td><?= $row[2] ?></td>
-                    <td><?= $row[3] ?></td>
-                    <td><img src="<?= $row[4] ?>"/></td>
-                    <td>
+                <tr class="editableRow">
+                    <td class="prodID"><?= $row[0] ?></td>
+                    <td class="prodName"><?= $row[1] ?></td>
+                    <td class="prodDescription"><?= $row[2] ?></td>
+                    <td class="prodPrice"><?= $row[3] ?></td>
+                    <td class="prodImg"><img src="<?= $row[4] ?>"/></td>
+                    <td class="prodButtons">
                         <button type="button" class="btn btn-default" aria-label="Редактировать">
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                         </button>

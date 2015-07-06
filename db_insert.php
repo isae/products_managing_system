@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 7/6/15
- * Time: 3:05 AM
- */
 require 'db_credentials.php';
 require 'db_actions_common.php';
 $msg = array('type' => '', 'message' => '');
