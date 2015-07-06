@@ -33,6 +33,9 @@ mysqli_real_query($db, "SELECT * FROM products WHERE 1");
                         <h4 class="modal-title" id="addProductModalLabel">Добавление товара</h4>
                     </div>
                     <div class="modal-body">
+                        <div class="form-group" id="alertZone">
+
+                        </div>
                         <div class="form-group">
                             <label for="formInput1">Название</label>
                             <input type="text" class="form-control" id="formInput1" placeholder="Название">
@@ -41,10 +44,10 @@ mysqli_real_query($db, "SELECT * FROM products WHERE 1");
                             <label for="formInput2">Описание</label>
                             <textarea class="form-control" id="formInput2" placeholder="Описание" rows="3"></textarea>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="width: 40%;">
                             <label for="formInput3">Цена</label>
 
-                            <div class="input-group" id="formInput3">
+                            <div class="input-group">
                                 <input type="text" class="form-control" id="formInput3" placeholder="0">
                                 <div class="input-group-addon">.00 руб</div>
                             </div>
@@ -53,10 +56,13 @@ mysqli_real_query($db, "SELECT * FROM products WHERE 1");
                             <label for="formInput4">Ссылка на изображение</label>
                             <input type="text" class="form-control" id="formInput4">
                         </div>
+                        <div class="form-group" id="formInput5">
+
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button type="button" type="submit" class="btn btn-primary">Добавить</button>
+                        <button id="productAddButton" type="button" type="submit" class="btn btn-primary">Добавить</button>
                     </div>
                 </div>
             </div>
