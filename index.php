@@ -14,81 +14,119 @@
 require_once 'db_credentials.php';
 $db = mysqli_connect(HOST, USER, PASSWORD, DATABASE, PORT) or die('Could not connect: ' . mysql_error());
 mysqli_real_query($db, "SET NAMES 'utf8'");
-mysqli_real_query($db, "SELECT * FROM products WHERE 1");
+$recordsOnPage = 2;
+$page = 0; $_GET['page'];
+if(isset($_GET['page'])){
+    $page=$_GET['page'];
+}
+$resource = mysqli_query($db, "SELECT COUNT(*) FROM products");
+$rows = mysqli_fetch_row($resource)[0];
+$from = $recordsOnPage*$page;
+$maxPage = (floor($rows/$recordsOnPage))-1;
+if($rows%$recordsOnPage!=0) {
+    ++$maxPage;
+}
+mysqli_real_query($db, "SELECT * FROM products LIMIT $from, $recordsOnPage;");
 ?>
+
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel">
+
+    <form>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addProductModalLabel">Добавление товара</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group" id="alertZone">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="formInput1">Название</label>
+                        <input type="text" class="form-control" id="formInput1" placeholder="Название">
+                    </div>
+                    <div class="form-group">
+                        <label for="formInput2">Описание</label>
+                        <textarea class="form-control" id="formInput2" placeholder="Описание" rows="3"></textarea>
+                    </div>
+                    <div class="form-group" style="width: 40%;">
+                        <label for="formInput3">Цена</label>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="formInput3" placeholder="0">
+                            <div class="input-group-addon">.00 руб</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="formInput4">Ссылка на изображение</label>
+                        <input type="text" class="form-control" id="formInput4">
+                    </div>
+                    <div class="form-group" id="formInput5">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button id="productAddButton" type="button" type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="maybeDeleteModal" tabindex="-1" role="dialog" aria-labelledby="maybeDeleteModalLabel">
+
+    <form>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="maybeDeleteModalLabel"></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                    <button id="productDeleteButton" type="button" type="submit" class="btn btn-danger">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 <div class="container">
     <div id="globalAlert">
-
     </div>
-    <button type="button" id="openModalButton" class="btn btn-primary btn-lg" style="margin: 10px 0 10px 0;">
-        Добавить товар
-    </button>
-
-    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel">
-
-        <form>
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="addProductModalLabel">Добавление товара</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group" id="alertZone">
-
-                        </div>
-                        <div class="form-group">
-                            <label for="formInput1">Название</label>
-                            <input type="text" class="form-control" id="formInput1" placeholder="Название">
-                        </div>
-                        <div class="form-group">
-                            <label for="formInput2">Описание</label>
-                            <textarea class="form-control" id="formInput2" placeholder="Описание" rows="3"></textarea>
-                        </div>
-                        <div class="form-group" style="width: 40%;">
-                            <label for="formInput3">Цена</label>
-
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="formInput3" placeholder="0">
-                                <div class="input-group-addon">.00 руб</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="formInput4">Ссылка на изображение</label>
-                            <input type="text" class="form-control" id="formInput4">
-                        </div>
-                        <div class="form-group" id="formInput5">
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button id="productAddButton" type="button" type="submit" class="btn btn-primary">Сохранить</button>
-                    </div>
+    <div class="row" style="padding: 10px 0 10px 0;">
+        <div class="col-xs-2">
+            <button type="button" id="openModalButton" class="btn btn-primary" >
+                Добавить товар
+            </button>
+        </div>
+        <div class="col-xs-7">
+        </div>
+        <div class="col-xs-2">
+            <h4>Страница <?=$page+1?> из <?=$maxPage+1?></h4>
+        </div>
+        <div class="col-xs-1">
+            <div class="row">
+                <div class="btn-group" role="group">
+                    <a type="button"
+                       class="btn btn-default <?php if ($page == 0): ?>disabled<?php endif; ?>"
+                       aria-label="Backward"
+                       href="./?page=<?= $page-1 ?>">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    </a>
+                    <a type="button"
+                       class="btn btn-default <?php if ($page == $maxPage): ?>disabled<?php endif; ?>"
+                       aria-label="Forward"
+                       href="./?page=<?= $page+1 ?>">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    </a>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
-    <div class="modal fade" id="maybeDeleteModal" tabindex="-1" role="dialog" aria-labelledby="maybeDeleteModalLabel">
-
-        <form>
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="maybeDeleteModalLabel"></h4>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                        <button id="productDeleteButton" type="button" type="submit" class="btn btn-danger">Удалить</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-    <table class="table">
+    <table class="table table-bordered table-hover">
         <thead>
         <th>ProductID</th>
         <th>Название</th>
@@ -98,7 +136,7 @@ mysqli_real_query($db, "SELECT * FROM products WHERE 1");
         <th>Действия</th>
         </thead>
         <tbody>
-        <?php if ($result = $db->use_result()): ?>
+        <?php if ($result = $db->store_result()): ?>
             <?php while ($row = $result->fetch_row()): ?>
                 <tr class="editableRow">
                     <td class="prodID"><?= $row[0] ?></td>

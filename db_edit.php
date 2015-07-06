@@ -5,6 +5,7 @@ $id = $_POST["productID"];
 $msg = array('type' => '', 'message' => '');
 $ok = true;
 $db = mysqli_connect(HOST, USER, PASSWORD, DATABASE, PORT) or die('Could not connect: ' . mysql_error());
+mysqli_real_query($db, "SET NAMES 'utf8'");
 $stmt = $db->prepare("UPDATE products SET name=?, description=?, price=?, imageUrl=? WHERE productID=?");
 if (!$stmt) {
     $ok = false;

@@ -4,6 +4,7 @@ require 'db_actions_common.php';
 $msg = array('type' => '', 'message' => '');
 $ok = true;
 $db = mysqli_connect(HOST, USER, PASSWORD, DATABASE, PORT) or die('Could not connect: ' . mysql_error());
+mysqli_real_query($db, "SET NAMES 'utf8'");
 $stmt = $db->prepare("INSERT INTO products(name, description, price, imageUrl) VALUES (?,?,?,?)");
 if (!$stmt) {
     $ok = false;
