@@ -8,6 +8,7 @@
     <script src="plugins/jquery-2.1.4.min.js"></script>
     <script src="plugins/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
     <script src="common/common.js"></script>
+    <script src="common/table_settings.js"></script>
 </head>
 <body>
 <?php
@@ -15,18 +16,28 @@ require_once 'db_credentials.php';
 $db = mysqli_connect(HOST, USER, PASSWORD, DATABASE, PORT) or die('Could not connect: ' . mysql_error());
 mysqli_real_query($db, "SET NAMES 'utf8'");
 $recordsOnPage = 2;
-$page = 0; $_GET['page'];
-if(isset($_GET['page'])){
-    $page=$_GET['page'];
+$page = 0;
+if (isset($_GET['page'])) {
+    $page = $_GET['page'];
 }
 $resource = mysqli_query($db, "SELECT COUNT(*) FROM products");
 $rows = mysqli_fetch_row($resource)[0];
-$from = $recordsOnPage*$page;
-$maxPage = (floor($rows/$recordsOnPage))-1;
-if($rows%$recordsOnPage!=0) {
+$from = $recordsOnPage * $page;
+$maxPage = (floor($rows / $recordsOnPage)) - 1;
+if ($rows % $recordsOnPage != 0) {
     ++$maxPage;
 }
-mysqli_real_query($db, "SELECT * FROM products LIMIT $from, $recordsOnPage;");
+$sort_by = 'productID';
+if (isset($_GET['sort_by'])) {
+    $sort_by = $_GET['sort_by'];
+    if($sort_by!='productID'&&$sort_by!='price') $sort_by='productID';
+}
+$order = 'asc';
+if (isset($_GET['order'])) {
+    $order = $_GET['order'];
+    if($order!='asc'&&$order!='desc') $order='asc';
+}
+mysqli_real_query($db, "SELECT * FROM products ORDER BY ".$sort_by." ".$order." LIMIT $from, $recordsOnPage; ");
 ?>
 
 <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel">
@@ -56,6 +67,7 @@ mysqli_real_query($db, "SELECT * FROM products LIMIT $from, $recordsOnPage;");
 
                         <div class="input-group">
                             <input type="text" class="form-control" id="formInput3" placeholder="0">
+
                             <div class="input-group-addon">.00 руб</div>
                         </div>
                     </div>
@@ -98,14 +110,14 @@ mysqli_real_query($db, "SELECT * FROM products LIMIT $from, $recordsOnPage;");
     </div>
     <div class="row" style="padding: 10px 0 10px 0;">
         <div class="col-xs-2">
-            <button type="button" id="openModalButton" class="btn btn-primary" >
+            <button type="button" id="openModalButton" class="btn btn-primary">
                 Добавить товар
             </button>
         </div>
         <div class="col-xs-7">
         </div>
         <div class="col-xs-2">
-            <h4>Страница <?=$page+1?> из <?=$maxPage+1?></h4>
+            <h4>Страница <?= $page + 1 ?> из <?= $maxPage + 1 ?></h4>
         </div>
         <div class="col-xs-1">
             <div class="row">
@@ -113,13 +125,13 @@ mysqli_real_query($db, "SELECT * FROM products LIMIT $from, $recordsOnPage;");
                     <a type="button"
                        class="btn btn-default <?php if ($page == 0): ?>disabled<?php endif; ?>"
                        aria-label="Backward"
-                       href="./?page=<?= $page-1 ?>">
+                       href="./?page=<?= $page - 1 ?>&sort_by=<?= $sort_by ?>&order=<?= $order ?>">
                         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                     </a>
                     <a type="button"
                        class="btn btn-default <?php if ($page == $maxPage): ?>disabled<?php endif; ?>"
                        aria-label="Forward"
-                       href="./?page=<?= $page+1 ?>">
+                       href="./?page=<?= $page + 1 ?>&sort_by=<?= $sort_by ?>&order=<?= $order ?>">
                         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                     </a>
                 </div>
@@ -128,10 +140,28 @@ mysqli_real_query($db, "SELECT * FROM products LIMIT $from, $recordsOnPage;");
     </div>
     <table class="table table-bordered table-hover">
         <thead>
-        <th>ProductID</th>
+        <th>ProductID
+            <a href="#" onclick="changeOrder('productID','<?=$sort_by?>','<?=$order?>',<?=$page?>);" >
+                <span style="color: grey" class="glyphicon
+                    <?php if ($sort_by == "price"): ?>glyphicon-sort<?php endif;?>
+                    <?php if ($sort_by == "productID" && $order == "asc"): ?>glyphicon-sort-by-attributes<?php endif;?>
+                    <?php if ($sort_by == "productID" && $order == "desc"): ?>glyphicon-sort-by-attributes-alt<?php endif;?>
+                    pull-right" aria-hidden="true" >
+                </span>
+            </a>
+        </th>
         <th>Название</th>
         <th>Описание</th>
-        <th>Цена</th>
+        <th>Цена
+            <a href="#" onclick="changeOrder('price','<?=$sort_by?>','<?=$order?>',<?=$page?>);" >
+                <span style="color: grey" class="glyphicon
+                    <?php if ($sort_by == "productID"): ?>glyphicon-sort<?php endif; ?>
+                    <?php if ($sort_by == "price" && $order == "asc"): ?>glyphicon-sort-by-attributes<?php endif;?>
+                    <?php if ($sort_by == "price" && $order == "desc"): ?>glyphicon-sort-by-attributes-alt<?php endif;?>
+                    pull-right" aria-hidden="true">
+                </span>
+            </a>
+        </th>
         <th>Изображение</th>
         <th>Действия</th>
         </thead>
