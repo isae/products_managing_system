@@ -17,6 +17,9 @@ mysqli_real_query($db, "SET NAMES 'utf8'");
 mysqli_real_query($db, "SELECT * FROM products WHERE 1");
 ?>
 <div class="container">
+    <div id="globalAlert">
+
+    </div>
     <h1>Hello, world!</h1>
     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addProductModal">
         Добавить товар
