@@ -15,7 +15,7 @@
 require_once 'db_credentials.php';
 $db = mysqli_connect(HOST, USER, PASSWORD, DATABASE, PORT) or die('Could not connect: ' . mysql_error());
 mysqli_real_query($db, "SET NAMES 'utf8'");
-$recordsOnPage = 2;
+$recordsOnPage = 50;
 $page = 0;
 if (isset($_GET['page'])) {
     $page = $_GET['page'];
@@ -169,12 +169,12 @@ mysqli_real_query($db, "SELECT * FROM products ORDER BY ".$sort_by." ".$order." 
         <?php if ($result = $db->store_result()): ?>
             <?php while ($row = $result->fetch_row()): ?>
                 <tr class="editableRow">
-                    <td class="prodID"><?= $row[0] ?></td>
+                    <td style="width:10%" class="prodID"><?= $row[0] ?></td>
                     <td class="prodName"><?= $row[1] ?></td>
                     <td class="prodDescription"><?= $row[2] ?></td>
-                    <td class="prodPrice"><?= $row[3] ?></td>
-                    <td class="prodImg"><img src="<?= $row[4] ?>"/></td>
-                    <td class="prodButtons">
+                    <td style="width:7%" class="prodPrice"><?= $row[3] ?></td>
+                    <td class="prodImg"><img class="visible-lg" style="width:200px;" src="<?= $row[4] ?>"/></td>
+                    <td class="prodButtons" style="width:100px;">
                         <button type="button" class="btn btn-default" aria-label="Редактировать">
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                         </button>

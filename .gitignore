@@ -1,2 +1,3 @@
 .idea/
-db_credentials.php
+db_credentials_local.php
+db_credentials_remote.php
