@@ -9,4 +9,3 @@
  * These are the database login details
  */
 require_once 'db_credentials_remote.php';
-
