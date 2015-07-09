@@ -1,6 +1,3 @@
-/**
- * Created by root on 7/6/15.
- */
 function changeOrder(from, sort_by, order, page) {
     var oppositeOrder = order == 'asc' ? 'desc' : 'asc';
     if (from == sort_by) {

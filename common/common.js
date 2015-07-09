@@ -1,7 +1,4 @@
-/**
- * Created by root on 7/5/15.
- */
-$(document).ready(function (e) {
+$(document).ready(function () {
     var input1 = $("#formInput1");
     var input2 = $("#formInput2");
     var input3 = $("#formInput3");
@@ -21,14 +18,14 @@ $(document).ready(function (e) {
         if (msg.type == "success") cl = "alert-success";
         if (msg.type == "error") cl = "alert-danger";
         globalAlertZone.html('<div class="alert ' + cl + '" role="alert">' + msg.message + '</div>');
-        setTimeout(function (e) {
+        setTimeout(function () {
             document.location.reload();
         }, 1500);
     }
 
     function make_modal_warning(msg) {
         modalAlertZone.html('<div class="alert alert-danger" role="alert">' + msg + '</div>');
-        setTimeout(function (e) {
+        setTimeout(function () {
             modalAlertZone.html("");
         }, 1500)
 
@@ -41,14 +38,14 @@ $(document).ready(function (e) {
     input4.on('input', showPreviewImage);
 
     function clearInputs() {
-        formInputs.forEach(function (item, i, arr) {
+        formInputs.forEach(function (item) {
             item.val('');
         });
         input5.html('');
     }
 
 
-    function prepareForAdding(e) {
+    function prepareForAdding() {
         $("#addProductModalLabel").html("Добавление товара");
         clearInputs();
         addButton.unbind('click');
@@ -61,7 +58,7 @@ $(document).ready(function (e) {
         clearInputs();
         input1.val(name);
         input2.val(description);
-        input3.val(cost)
+        input3.val(cost);
         input4.val(imgUrl);
         showPreviewImage();
         addButton.unbind('click');
@@ -98,23 +95,23 @@ $(document).ready(function (e) {
                 make_global_warning(JSON.parse(msg));
             },
             error: function (msg) {
-                alert("Сервер недоступен: " + msg);
+                alert("Сервер недоступен: " + JSON.stringify(msg));
             }
         });
     }
 
     function editProduct(id) {
-        sendDataToServer("db_edit.php", id);
+        sendDataToServer("db/db_edit.php", id);
     }
 
     function addProduct() {
-        sendDataToServer("db_insert.php");
+        sendDataToServer("db/db_insert.php");
     }
 
     function deleteProduct(id) {
         $.ajax({
             type: "POST",
-            url: "db_delete.php",
+            url: "db/db_delete.php",
             data: {
                 productID: id
             },
@@ -140,7 +137,7 @@ $(document).ready(function (e) {
 
 
     $("#openModalButton").click(prepareForAdding);
-    $(".editableRow").each(function (index) {
+    $(".editableRow").each(function () {
         var id = $(this).children(".prodID").html();
         var name = $(this).children(".prodName").html();
         var description = $(this).children(".prodDescription").html();

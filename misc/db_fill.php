@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 7/7/15
- * Time: 4:49 PM
- */
 //xml files with catalogues are from Ozon.ru: http://www.ozon.ru/context/partner_xml/
-require_once '../db_credentials.php';
+require_once '../db/db_credentials.php';
 $files = ["div_bs.xml", "div_fashion.xml", "div_home.xml", "div_soft.xml", "div_tech.xml"];
 $file = "div_appliance.xml";
 $depth = array();

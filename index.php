@@ -12,11 +12,18 @@
 </head>
 <body>
 <?php
-require_once 'db_credentials.php';
-require_once 'memcached_work.php';
-$db = mysqli_connect(HOST, USER, PASSWORD, DATABASE, PORT) or die('Could not connect: ' . mysql_error());
+require_once 'db/db_credentials.php';
+require_once 'db/memcached_work.php';
+require_once 'db/db_actions_common.php';
+$db = mysqli_connect(HOST, USER, PASSWORD, DATABASE, PORT);
+?>
+
+<?php if (mysqli_connect_error()): ?>
+    <div class="alert alert-danger" role="alert">Отсутствует соединение с базой</div>
+<?php endif; ?>
+
+<?php
 mysqli_real_query($db, "SET NAMES 'utf8'");
-$recordsOnPage = 50;
 $page = 0;
 if (isset($_GET['page'])) {
     $page = $_GET['page'];
@@ -38,7 +45,6 @@ if (isset($_GET['order'])) {
     $order = $_GET['order'];
     if ($order != 'asc' && $order != 'desc') $order = 'asc';
 }
-$memcache_enabled = true;
 $query = "SELECT * FROM products ORDER BY " . $sort_by . " " . $order . " LIMIT $from, $recordsOnPage;";
 if ($memcache_enabled) {
     $result = getPageFromCache($query);
@@ -94,7 +100,7 @@ if ($memcache_enabled) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                    <button id="productAddButton" type="button" type="submit" class="btn btn-primary">Сохранить</button>
+                    <button id="productAddButton" type="button" class="btn btn-primary">Сохранить</button>
                 </div>
             </div>
         </div>
@@ -112,7 +118,7 @@ if ($memcache_enabled) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                    <button id="productDeleteButton" type="button" type="submit" class="btn btn-danger">Удалить</button>
+                    <button id="productDeleteButton" type="button" class="btn btn-danger">Удалить</button>
                 </div>
             </div>
         </div>
@@ -127,7 +133,10 @@ if ($memcache_enabled) {
                 Добавить товар
             </button>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-3">
+        </div>
+        <div class="col-xs-3">
+            <h4><?= $recordsOnPage ?> записей на странице</h4>
         </div>
         <div class="col-xs-3">
             <h4>Страница <?= $page + 1 ?> из <?= $maxPage + 1 ?></h4>
@@ -153,30 +162,32 @@ if ($memcache_enabled) {
     </div>
     <table class="table table-bordered table-hover">
         <thead>
-        <th>ProductID
-            <a href="#" onclick="changeOrder('productID','<?= $sort_by ?>','<?= $order ?>',<?= $page ?>);">
+        <tr>
+            <th>ProductID
+                <a href="#" onclick="changeOrder('productID','<?= $sort_by ?>','<?= $order ?>',<?= $page ?>);">
                 <span style="color: grey" class="glyphicon
                     <?php if ($sort_by == "price"): ?>glyphicon-sort<?php endif; ?>
                     <?php if ($sort_by == "productID" && $order == "asc"): ?>glyphicon-sort-by-attributes<?php endif; ?>
                     <?php if ($sort_by == "productID" && $order == "desc"): ?>glyphicon-sort-by-attributes-alt<?php endif; ?>
                     pull-right" aria-hidden="true">
                 </span>
-            </a>
-        </th>
-        <th>Название</th>
-        <th>Описание</th>
-        <th>Цена
-            <a href="#" onclick="changeOrder('price','<?= $sort_by ?>','<?= $order ?>',<?= $page ?>);">
+                </a>
+            </th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Цена
+                <a href="#" onclick="changeOrder('price','<?= $sort_by ?>','<?= $order ?>',<?= $page ?>);">
                 <span style="color: grey" class="glyphicon
                     <?php if ($sort_by == "productID"): ?>glyphicon-sort<?php endif; ?>
                     <?php if ($sort_by == "price" && $order == "asc"): ?>glyphicon-sort-by-attributes<?php endif; ?>
                     <?php if ($sort_by == "price" && $order == "desc"): ?>glyphicon-sort-by-attributes-alt<?php endif; ?>
                     pull-right" aria-hidden="true">
                 </span>
-            </a>
-        </th>
-        <th>Изображение</th>
-        <th>Действия</th>
+                </a>
+            </th>
+            <th>Изображение</th>
+            <th>Действия</th>
+        </tr>
         </thead>
         <tbody>
         <?php foreach ($result as $row) : ?>
@@ -187,10 +198,10 @@ if ($memcache_enabled) {
                 <td style="width:7%" class="prodPrice"><?= $row[3] ?></td>
                 <td class="prodImg"><img class="visible-lg" style="width:200px;" src="<?= $row[4] ?>"/></td>
                 <td class="prodButtons" style="width:100px;">
-                    <button type="button" class="btn btn-default" aria-label="Редактировать">
+                    <button type="button" class="btn btn-default center-block" aria-label="Редактировать">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </button>
-                    <button type="button" class="btn btn-default" aria-label="Удалить">
+                    <button type="button" class="btn btn-default center-block" aria-label="Удалить">
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </button>
                 </td>
